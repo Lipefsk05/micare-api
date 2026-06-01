@@ -1,0 +1,162 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// USUÁRIOS (médicos)
+// ─────────────────────────────────────────────
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  crm       String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  prenatalCards PrenatalCard[]
+
+  @@map("users")
+}
+
+// ─────────────────────────────────────────────
+// PACIENTES
+// ─────────────────────────────────────────────
+model Patient {
+  id             String   @id @default(uuid())
+  name           String
+  cpf            String   @unique
+  birthDate      DateTime @map("birth_date")
+  phone          String?
+  emergencyPhone String?  @map("emergency_phone")
+  accessCode     String   @unique @map("access_code")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  prenatalCards PrenatalCard[]
+
+  @@map("patients")
+}
+
+// ─────────────────────────────────────────────
+// CARTÃO DE PRÉ NATAL
+// ─────────────────────────────────────────────
+model PrenatalCard {
+  id        String @id @default(uuid())
+  patientId String @map("patient_id")
+  doctorId  String @map("doctor_id")
+
+  pnrh     String?
+  pnarPor  String?   @map("pnar_por")
+  dum      DateTime?
+  dpp      DateTime?
+  firstUsg DateTime? @map("first_usg")
+  igWeeks  Int?      @map("ig_weeks")
+
+  gestacoes      Int? @map("gestacoes")
+  partosCesareos Int? @map("partos_cesareos")
+  partosNormais  Int? @map("partos_normais")
+  abortos        Int? @map("abortos")
+
+  hpp String?
+  hgo String?
+  hs  String?
+  hf  String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  patient       Patient        @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  doctor        User           @relation(fields: [doctorId], references: [id])
+  exams         Exam[]
+  consultations Consultation[]
+
+  @@map("prenatal_cards")
+}
+
+// ─────────────────────────────────────────────
+// EXAMES LABORATORIAIS
+// ─────────────────────────────────────────────
+model Exam {
+  id     String   @id @default(uuid())
+  cardId String   @map("card_id")
+  type   ExamType
+
+  result1 String?   @map("result_1")
+  date1   DateTime? @map("date_1")
+
+  result2 String?   @map("result_2")
+  date2   DateTime? @map("date_2")
+
+  result3 String?   @map("result_3")
+  date3   DateTime? @map("date_3")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  card PrenatalCard @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@unique([cardId, type])
+  @@map("exams")
+}
+
+enum ExamType {
+  GS
+  COOMBS_IND
+  HB_HT
+  GL
+  PLAQ
+  HIV
+  HBSAG
+  VDRL
+  ANTI_HCV
+  TOXOPLASMOSE
+  RUBEOLA
+  CVM
+  ANTI_HBS
+  GLICOSE_J
+  GPD
+  HTLV
+  TSH_T4L
+  EAS
+  UROCULTURA
+  STREP_B
+  PREVENTIVO
+  FERRITINA
+  VITAMINA_D
+  VITAMINA_B12
+
+  @@map("exam_type")
+}
+
+// ─────────────────────────────────────────────
+// CONSULTAS (1ª à 11ª)
+// ─────────────────────────────────────────────
+model Consultation {
+  id            String @id @default(uuid())
+  cardId        String @map("card_id")
+  consultNumber Int    @map("consult_number")
+
+  date       DateTime?
+  complaint  String?
+  ss         String?
+  weight     Float?
+  pa         String?
+  ai         String?
+  touch      String?
+  signature  String?
+  returnDate DateTime? @map("return_date")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  card PrenatalCard @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@unique([cardId, consultNumber])
+  @@map("consultations")
+}
