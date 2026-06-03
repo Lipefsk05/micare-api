@@ -16,7 +16,7 @@ export const app = Fastify({ logger: true })
 app.register(cors, {
   origin: [
     'http://localhost:3000',
-    'https://SEU-PROJETO.onrender.com', // URL real do seu front no Render
+    'https://micare-one.vercel.app',
   ],
   credentials: true,
 })
