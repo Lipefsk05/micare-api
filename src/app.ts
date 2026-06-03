@@ -13,7 +13,13 @@ import { consultationRoutes } from './modules/consultations/consultations.routes
 export const app = Fastify({ logger: true })
 
 // Plugins
-app.register(cors, { origin: true })
+app.register(cors, {
+  origin: [
+    'http://localhost:3000',
+    'https://SEU-PROJETO.onrender.com', // URL real do seu front no Render
+  ],
+  credentials: true,
+})
 app.register(jwt, { secret: process.env.JWT_SECRET ?? 'micare_secret_dev' })
 
 // Rotas
