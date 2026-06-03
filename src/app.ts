@@ -16,7 +16,7 @@ export const app = Fastify({ logger: true })
 app.register(cors, {
   origin: [
     'http://localhost:3000',
-    'https://micare-one.vercel.app',
+    'https://micareweb.vercel.app',
   ],
   credentials: true,
 })
