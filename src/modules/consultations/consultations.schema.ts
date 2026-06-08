@@ -10,6 +10,7 @@ export const upsertConsultationSchema = z.object({
   ai: z.string().optional(),
   touch: z.string().optional(),
   signature: z.string().optional(),
+  conduta: z.string().optional(),
   returnDate: z.string().transform((v) => new Date(v)).optional(),
 })
 

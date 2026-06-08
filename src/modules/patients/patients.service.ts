@@ -1,6 +1,7 @@
 import prisma from '../../config/prisma'
 import { AppError } from '../../shared/errors/AppError'
 import { generateAccessCode } from '../../shared/utils/generateAccessCode'
+import { computeGestationalAge } from '../../shared/utils/gestation'
 import { CreatePatientInput, UpdatePatientInput } from './patients.schema'
 
 export async function createPatientService(data: CreatePatientInput) {
@@ -37,7 +38,9 @@ export async function getPatientByIdService(id: string) {
     include: { prenatalCards: { include: { exams: true, consultations: true } } },
   })
   if (!patient) throw new AppError('Paciente não encontrada.', 404)
-  return patient
+  // add ig to each prenatal card
+  const cards = patient.prenatalCards.map((c) => ({ ...c, ig: computeGestationalAge(c.dum ?? undefined) }))
+  return { ...patient, prenatalCards: cards }
 }
 
 export async function searchPatientPublicService(params: {
@@ -71,7 +74,8 @@ export async function searchPatientPublicService(params: {
   })
 
   if (!patient) throw new AppError('Paciente não encontrada.', 404)
-  return patient
+  const cards = patient.prenatalCards.map((c) => ({ ...c, ig: computeGestationalAge(c.dum ?? undefined) }))
+  return { ...patient, prenatalCards: cards }
 }
 
 export async function updatePatientService(id: string, data: UpdatePatientInput) {

@@ -2,7 +2,6 @@ import { z } from 'zod'
 
 export const createCardSchema = z.object({
   patientId: z.string().uuid(),
-  pnrh: z.string().optional(),
   pnarPor: z.string().optional(),
   dum: z.string().transform((v) => new Date(v)).optional(),
   dpp: z.string().transform((v) => new Date(v)).optional(),

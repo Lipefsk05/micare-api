@@ -11,11 +11,20 @@ async function assertCardExists(cardId: string) {
 export async function upsertExamService(cardId: string, data: UpsertExamInput) {
   await assertCardExists(cardId)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const type = data.type as any
+  // if a common `date` was provided, apply to date1/date2/date3 when not present
+  const payload: any = { ...data }
+  if (data.date) {
+    payload.date1 = data.date
+    payload.date2 = data.date
+    payload.date3 = data.date
+  }
+  delete payload.date
   return prisma.exam.upsert({
     where: { cardId_type: { cardId, type } },
-    create: { cardId, ...data, type },
-    update: { ...data, type },
+    create: { cardId, ...payload, type },
+    update: { ...payload, type },
   })
 }
 

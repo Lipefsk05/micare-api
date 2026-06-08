@@ -50,8 +50,6 @@ model PrenatalCard {
   id        String @id @default(uuid())
   patientId String @map("patient_id")
   doctorId  String @map("doctor_id")
-
-  pnrh     String?
   pnarPor  String?   @map("pnar_por")
   dum      DateTime?
   dpp      DateTime?
@@ -144,6 +142,7 @@ model Consultation {
 
   date       DateTime?
   complaint  String?
+  conduta    String?
   ss         String?
   weight     Float?
   pa         String?
