@@ -35,7 +35,18 @@ export async function listPatientsService(search?: string) {
 export async function getPatientByIdService(id: string) {
   const patient = await prisma.patient.findUnique({
     where: { id },
-    include: { prenatalCards: { include: { exams: true, consultations: true } } },
+    include: {
+      prenatalCards: {
+        include: {
+          exams: { orderBy: { type: 'asc' } },
+          consultations: { orderBy: { consultNumber: 'asc' }, select: {
+            id: true, cardId: true, consultNumber: true, date: true, complaint: true,
+            ss: true, weight: true, pa: true, ai: true, touch: true, signature: true,
+            returnDate: true, createdAt: true, updatedAt: true
+          } },
+        },
+      },
+    },
   })
   if (!patient) throw new AppError('Paciente não encontrada.', 404)
   // add ig to each prenatal card
@@ -66,7 +77,11 @@ export async function searchPatientPublicService(params: {
       prenatalCards: {
         include: {
           exams: { orderBy: { type: 'asc' } },
-          consultations: { orderBy: { consultNumber: 'asc' } },
+          consultations: { orderBy: { consultNumber: 'asc' }, select: {
+            id: true, cardId: true, consultNumber: true, date: true, complaint: true,
+            ss: true, weight: true, pa: true, ai: true, touch: true, signature: true,
+            returnDate: true, createdAt: true, updatedAt: true
+          } },
           doctor: { select: { name: true, crm: true } },
         },
       },
