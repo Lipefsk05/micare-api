@@ -41,6 +41,7 @@ export async function getPatientByIdService(id: string) {
           exams: { orderBy: { type: 'asc' } },
           consultations: { orderBy: { consultNumber: 'asc' }, select: {
             id: true, cardId: true, consultNumber: true, date: true, complaint: true,
+            conduta: true,
             ss: true, weight: true, pa: true, ai: true, touch: true, signature: true,
             returnDate: true, createdAt: true, updatedAt: true
           } },
@@ -79,6 +80,7 @@ export async function searchPatientPublicService(params: {
           exams: { orderBy: { type: 'asc' } },
           consultations: { orderBy: { consultNumber: 'asc' }, select: {
             id: true, cardId: true, consultNumber: true, date: true, complaint: true,
+            conduta: true,
             ss: true, weight: true, pa: true, ai: true, touch: true, signature: true,
             returnDate: true, createdAt: true, updatedAt: true
           } },
